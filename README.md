@@ -9,7 +9,12 @@ Copy or link the file `i3.jq` into your `~/.jq`.
 
 ```sh
 # Get a flattened list of windows
-i3-msg -t get_tree | jq -r 'include "i3"; windows|.id + "\t" + .name' | fzf --with-nth=2..
+i3-msg -t get_tree | jq -r 'include "i3"; windows'
+
+# Choose a window by name, focus it by id:
+i3-msg "[con_id=$(
+	i3-msg -t get_tree | jq -r 'include "i3"; windows|.id + "\t" + .name' | fzf --with-nth='2..' | cut -f1
+)]" focus
 
 # Get a list of windows matching a certain criteria
 i3-msg -t get_tree | jq -r 'include "i3"; windows({output:"eDP1"})'
