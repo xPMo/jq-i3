@@ -2,6 +2,7 @@
 module {
 	"name": "i3"
 };
+
 def windows:
 	.nodes + .floating_nodes | .[] |
 	if .type == "output" then
@@ -25,7 +26,7 @@ def windows(m):
 	else
 		empty
 	end;
-	
+
 # Usage: i3-msg -t subscribe -m '["binding"]' | ... | xargs -n 2 notify-send
 def print_binds:
 	select(.change == "run").binding |
