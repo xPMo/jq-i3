@@ -14,8 +14,8 @@ i3-msg -t get_tree | jq -r 'include "i3"; windows'
 i3-msg -t get_tree | jq -r 'import "i3" as i3; i3::windows'
 
 # Choose a window by name, focus it by id:
-i3-msg "[con_id=$(
-	i3-msg -t get_tree | jq -r 'include "i3"; windows|.id + "\t" + .name' | fzf --with-nth='2..' | cut -f1
+i3-msg "[con_id=$(i3-msg -t get_tree |
+	jq -r 'include "i3"; windows|(.id | tostring) + "\t" + .name' | fzf --with-nth='2..' | cut -f1
 )]" focus
 
 # Get a list of windows matching a certain criteria
