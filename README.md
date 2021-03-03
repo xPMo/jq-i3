@@ -21,6 +21,14 @@ i3-msg "[con_id=$(
 # Get a list of windows matching a certain criteria
 i3-msg -t get_tree | jq -r 'include "i3"; windows(contains({"output":"eDP-1"}))'
 
+# Get the list of containers that are anscestors to the currently focused window
+i3-msg -t get_tree | jq -r 'include "i3"; stack'
+# OR
+i3-msg -t get_tree | jq -r 'include "i3"; stack(.focused)'
+
+# Get the container id of the closest anscestor which is a tabbed container
+i3-msg -t get_tree | jq -r 'include "i3"; [stack[] | select(.layout == "tabbed")] | last.id'
+
 # Debug your bindings:
 i3-msg -t subscribe -m '["binding"]' | jq -r 'include "i3"; print_binds' | xargs -n 2 notify-send
 ```

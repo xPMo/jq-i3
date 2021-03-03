@@ -3,6 +3,18 @@ module {
 	"name": "i3"
 };
 
+def stack(condition):
+	(del(.nodes) | del(.floating_nodes)) as $this |
+	if condition then
+		[$this], [$this] + ((.nodes + .floating_nodes)[] | stack(condition))
+	elif . then
+		[$this] + ((.nodes + .floating_nodes)[] | stack(condition))
+	else
+		empty
+	end;	
+
+def stack: stack(.focused);
+
 def windows:
 	.nodes + .floating_nodes | .[] |
 	if .type == "output" then
