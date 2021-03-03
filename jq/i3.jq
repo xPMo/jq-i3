@@ -16,13 +16,13 @@ def windows:
 	end;
 
 # Usage:
-# windows({"name": $ws1, "type": "workspace"})
-def windows(m):
+# windows(contains({"name": $ws1, "type": "workspace"}))
+def windows(condition):
 	.nodes + .floating_nodes | .[] |
-	if contains(m) then
+	if condition then
 		windows
 	elif .nodes + .floating_nodes | length != 0 then
-		windows(m)
+		windows(condition)
 	else
 		empty
 	end;
