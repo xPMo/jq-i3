@@ -19,7 +19,7 @@ i3-msg "[con_id=$(
 )]" focus
 
 # Get a list of windows matching a certain criteria
-i3-msg -t get_tree | jq -r 'include "i3"; windows({output:"eDP1"})'
+i3-msg -t get_tree | jq -r 'include "i3"; windows({"output":"eDP-1"})'
 
 # Debug your bindings:
 i3-msg -t subscribe -m '["binding"]' | jq -r 'include "i3"; print_binds' | xargs -n 2 notify-send
