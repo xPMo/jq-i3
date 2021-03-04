@@ -32,6 +32,11 @@ i3-msg -t get_tree | jq -r 'include "i3"; stack(.focused)'
 # Get the container id of the closest anscestor which is a tabbed container
 i3-msg -t get_tree | jq -r 'include "i3"; [stack[] | select(.layout == "tabbed")] | last.id'
 
+# Do that, but then move to the next tab, then descend until you reach a window
+i3-msg -t get_tree | jq -r 'include "i3"; [stack[] | select(.layout == "tabbed")] | last |
+	.focus[1] as $nexttab | (.floating_nodes + .nodes)[] |select(.id == $nexttab) | focus_stack[-1].id'
+
+
 # Debug your bindings:
 i3-msg -t subscribe -m '["binding"]' | jq -r 'include "i3"; print_binds' | xargs -n 2 notify-send
 ```

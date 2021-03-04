@@ -3,16 +3,37 @@ module {
 	"name": "i3"
 };
 
+# Return all array(s) which are parent-child-child...
+# where at least one element matches 'condition'
 def stack(condition):
 	if condition then
 		[.], [.] + ((.nodes + .floating_nodes)[] | stack(condition))
 	elif . then
 		[.] + ((.nodes + .floating_nodes)[] | stack(condition))
 	else
-		empty # $anything + empty == empty
+		empty
 	end;	
 
 def stack: stack(.focused);
+
+def focus_stack(condition; found):
+	if condition or found then
+		if .focus[0] then
+			.focus[0] as $target |
+			[.] + ((.nodes + .floating_nodes)[] |
+				(select(.id == $target) | focus_stack(condition; true )),
+				(select(.id != $target) | focus_stack(condition; false))
+			)
+		else
+			[.]
+		end
+	else
+		[.] + ((.nodes + .floating_nodes)[] | focus_stack(condition; false))
+	end;
+
+def focus_stack(condition): focus_stack(condition; false);
+
+def focus_stack: focus_stack(false; true);
 
 def windows:
 	.nodes + .floating_nodes | .[] |
