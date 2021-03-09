@@ -3,10 +3,10 @@ module {
 	"name": "i3"
 };
 
-# Return lists of subtrees array(s) which are parent-child-child...
-# where at least one element matches 'condition'.
-# If 'found', then also add the list of subtrees resulting from
-# recursing on .focus[0]
+# For every node that matches 'condition', output an array of subtrees:
+# [ ... parent-parent, parent, our-node, child, child-child, ... ]
+# where each child is the target of .focus[0] (i.e.: the "focus child" command
+# would focus that node)
 def stack(condition; found):
 	if condition or found then
 		if .focus[0] then
@@ -26,6 +26,7 @@ def stack(condition; found):
 def stack(condition): stack(condition; false);
 
 # No arguments: recurse only on .focus[0]
+# When run on the whole tree, this should end on a node which is .focused
 def stack: stack(false; true);
 
 def windows:
