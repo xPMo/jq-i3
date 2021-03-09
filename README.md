@@ -24,9 +24,10 @@ i3-msg "[con_id=$(
 # Get a list of windows matching a certain criteria
 i3-msg -t get_tree | jq -r 'include "i3"; windows(contains({"output":"eDP-1"}))'
 
-# Get the list of containers that are anscestors to the currently focused window
+# (NOTE: these two do the same thing to the full tree, but different things to subtrees)
+# Get the list of nodes by following each nodes .focus[0] element
 i3-msg -t get_tree | jq -r 'include "i3"; stack'
-# OR
+# Get the list of nodes that are anscestors to the currently focused container
 i3-msg -t get_tree | jq -r 'include "i3"; stack(.focused)'
 
 # Get the container id of the closest anscestor which is a tabbed container
@@ -34,7 +35,7 @@ i3-msg -t get_tree | jq -r 'include "i3"; [stack[] | select(.layout == "tabbed")
 
 # Do that, but then move to the next tab, then descend until you reach a window
 i3-msg -t get_tree | jq -r 'include "i3"; [stack[] | select(.layout == "tabbed")] | last |
-	.focus[1] as $nexttab | (.floating_nodes + .nodes)[] |select(.id == $nexttab) | focus_stack[-1].id'
+	.focus[1] as $nexttab | (.floating_nodes + .nodes)[] |select(.id == $nexttab) | stack[-1].id'
 
 
 # Debug your bindings:

@@ -3,37 +3,30 @@ module {
 	"name": "i3"
 };
 
-# Return all array(s) which are parent-child-child...
-# where at least one element matches 'condition'
-def stack(condition):
-	if condition then
-		[.], [.] + ((.nodes + .floating_nodes)[] | stack(condition))
-	elif . then
-		[.] + ((.nodes + .floating_nodes)[] | stack(condition))
-	else
-		empty
-	end;	
-
-def stack: stack(.focused);
-
-def focus_stack(condition; found):
+# Return lists of subtrees array(s) which are parent-child-child...
+# where at least one element matches 'condition'.
+# If 'found', then also add the list of subtrees resulting from
+# recursing on .focus[0]
+def stack(condition; found):
 	if condition or found then
 		if .focus[0] then
 			.focus[0] as $target |
 			[.] + ((.nodes + .floating_nodes)[] |
-				(select(.id == $target) | focus_stack(condition; true )),
-				(select(.id != $target) | focus_stack(condition; false))
+				(select(.id == $target) | stack(condition; true )),
+				(select(.id != $target) | stack(condition; false))
 			)
 		else
 			[.]
 		end
 	else
-		[.] + ((.nodes + .floating_nodes)[] | focus_stack(condition; false))
+		[.] + ((.nodes + .floating_nodes)[] | stack(condition; found))
 	end;
 
-def focus_stack(condition): focus_stack(condition; false);
+# One arguement: recurse only on 'condition'
+def stack(condition): stack(condition; false);
 
-def focus_stack: focus_stack(false; true);
+# No arguments: recurse only on .focus[0]
+def stack: stack(false; true);
 
 def windows:
 	.nodes + .floating_nodes | .[] |
